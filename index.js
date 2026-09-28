@@ -112,7 +112,7 @@ app.post('/api/persons',(request, response) =>{
   })
 })
 
-app.put('/api/put/:id', (request, response, next) => {
+app.put('/api/put/persons/:id', (request, response, next) => {
   const {name, body} = request.body
   Person.findById(request.params.id)
     .then(person =>{
