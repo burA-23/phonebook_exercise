@@ -116,9 +116,7 @@ app.put('/api/persons/:id', (request, response, next) => {
   const {name, number} = request.body
   Person.findById(request.params.id)
     .then(person =>{
-      if(!person){
-        response.status(404).end()
-      } 
+       
       person.name = name
       person.number = number 
 
@@ -130,8 +128,11 @@ app.put('/api/persons/:id', (request, response, next) => {
 })
 
 const errorHandler = (error, request, response, next) =>{
+  console.error(error.message)
   if(error.name === 'CastError'){
     response.status(400).send({error: 'Malformated error'})
+  }else if(error.name === 'ValidationError'){
+    response.status(400).send({error: error.message})
   }
   next(error)
 }
