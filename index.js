@@ -1,12 +1,15 @@
+require('dotenv').config() // first change
 const express = require('express')
 const morgan = require('morgan') 
+const Person = require('./models/person')
 const app = express()
 app.use(express.json())// a middleware - a function that handles request and response objects.
-app.use(morgan('dev'))
+//app.use(morgan('dev'))
 app.use(express.static('dist'))
 
 
-let persons = [
+{/*let persons = [
+  
 
     { 
       "id": "1",
@@ -29,44 +32,58 @@ let persons = [
       "number": "39-23-6423122"
     }
 
-]
+]*/}
 
 app.get('/info', (request, response)=>{
   const now = new Date()
   return response.send(`<p>Phonebook has infor for ${persons.length} people</p><br/>${now.toString()}`)
 })
 app.get('/api/persons', (request, response) =>{
-  response.json(persons)
+  Person.find({}).then(persons =>{
+    response.json(persons)
+  })
 })
 
-app.get('/abopi/persons/:id', (request, response) =>{
-  const id = request.params.id
+app.get('/api/persons/:id', (request, response) =>{
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person){
+        response.json(person)
+      } else{
+        response.status(404).end()
+      }
+    })
+    .catch(error =>next(error))
+})
+  {/* const id = request.params.id
   const person = persons.find(p => p.id === id)
   if (person){
     response.json(person)
   }else{
     response.status(404).end()
-  }
+  }*/}
+
+
+app.delete('/api/persons/:id', (request, response, next) =>{
+  Person.findByIdAndDelete(request.params.id)
+    .then(result =>{
+      response.status(204).end()
+    })
+    .catch(error=> next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) =>{
-  const id = request.params.id 
-  persons = persons.filter(p => p.id !== id)
-  response.status(204).end()
-})
-
-const generateId =()=>{
+{/*const generateId =()=>{
   const maxId = persons.length > 0 
     ? Math.max(...persons.map(p =>Number(p.id)))
     : 0
   return String(maxId + 1)
-}
+}*/}
 
 
 app.post('/api/persons',(request, response) =>{
   const body = request.body
   console.log(body)
-  const nameExists = persons.some(p => p.name.toLowerCase()===body.name.toLowerCase())
+  {/*const nameExists = persons.some(p => p.name.toLowerCase()===body.name.toLowerCase())
 
   if(!body.number || !body.name){// the body.name is now irrelevant because it is represented in the nameExists variable.
     return response.status(400).json({
@@ -84,18 +101,41 @@ app.post('/api/persons',(request, response) =>{
     })*/}
     
   
-  const person = {
-    id:generateId(),
+  const person = new Person ({
+    //id:generateId(),
     name: body.name,
-    number: body.number
-  }
-  
+    number: body.number,
+  })
 
-  persons.concat(person)
-  console.log(person)
-  response.status(201).json(person)
-
+  person.save().then(savedContact => {
+    response.json(savedContact)
+  })
 })
+
+app.put('/api/put/:id', (request, response, next) => {
+  const {name, body} = request.body
+  Person.findById(request.params.id)
+    .then(person =>{
+      if(!person){
+        response.status(404).end
+      } 
+      person.name = name
+      person.body = body
+
+      return person.save().then(updatedContact =>{
+        response.json(updatedContact)
+      })
+    })
+    .catch(error => next(error))
+})
+
+const errorHandler = (error, request, response, next) =>{
+  if(error.name === 'CastError'){
+    response.status(400).send({error: 'Malformated error'})
+  }
+  .catch(error => next(error))
+}
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001 
 app.listen(PORT, '0.0.0.0',() =>{
