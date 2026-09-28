@@ -133,7 +133,7 @@ const errorHandler = (error, request, response, next) =>{
   if(error.name === 'CastError'){
     response.status(400).send({error: 'Malformated error'})
   }
-  .catch(error => next(error))
+  next(error)
 }
 app.use(errorHandler)
 
