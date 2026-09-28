@@ -16,8 +16,8 @@ const personSchema = new mongoose.Schema({
     type:String,
     minLength: 5, 
     required: true
-  }
-  number: String,// don't know if its int or string., 
+  },
+  number: String,
 })
 
 personSchema.set("toJSON", {
