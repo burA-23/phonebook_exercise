@@ -127,6 +127,12 @@ app.put('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
+const unknownEndpoint = (request, response) =>{
+  response.status(404).send({error: "Unkown Endpoint"})
+}
+
+app.use(unknownEndpoint)
+
 const errorHandler = (error, request, response, next) =>{
   console.error(error.message)
   if(error.name === 'CastError'){
