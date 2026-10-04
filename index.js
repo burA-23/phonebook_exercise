@@ -110,6 +110,7 @@ app.post('/api/persons',(request, response, next) =>{
   person.save().then(savedContact => {
     response.json(savedContact)
   })
+  .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
