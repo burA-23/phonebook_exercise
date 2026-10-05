@@ -17,7 +17,7 @@ const personSchema = new mongoose.Schema({
     minLength: [5, 'Must be atleast 5, got {VALUE}'], 
     required: true,
   },
-  phone: {
+  number: {
     type: String,
     validate: {
       validator: function(v) {
