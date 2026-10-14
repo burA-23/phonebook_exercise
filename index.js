@@ -114,12 +114,12 @@ app.post('/api/persons',(request, response, next) =>{
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const {name, number} = request.body
+  const {name, phone} = request.body
   Person.findById(request.params.id)
     .then(person =>{
        
       person.name = name
-      person.number = number 
+      person.number = phone // changed it from number 
 
       return person.save().then(updatedContact =>{
         response.json(updatedContact)
