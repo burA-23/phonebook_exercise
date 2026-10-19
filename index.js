@@ -104,7 +104,7 @@ app.post('/api/persons',(request, response, next) =>{
   const person = new Person ({
     //id:generateId(),
     name: body.name,
-    number: body.phone
+    phone: body.phone
   })
 
   person.save().then(savedContact => {
@@ -119,7 +119,7 @@ app.put('/api/persons/:id', (request, response, next) => {
     .then(person =>{
        
       person.name = name
-      person.number = phone // changed it from number 
+      person.phone = phone // changed it from number 
 
       return person.save().then(updatedContact =>{
         response.json(updatedContact)

@@ -17,8 +17,9 @@ const personSchema = new mongoose.Schema({
     minLength: [5, 'Must be atleast 5, got {VALUE}'], 
     required: true,
   },
-  number: {
+  phone: {
     type: String,
+    trim: true,
     validate: {
       validator: function(v) {
         return /^\d{2,3}-\d{7,8}$/.test(v)
